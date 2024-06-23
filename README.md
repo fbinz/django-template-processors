@@ -29,14 +29,51 @@ configurable to add your own pre- and post-processing hooks.
 
 - Add module to `INSTALLED_APPS` within the main django `settings.py`:
 
-    ````
+    ```python
     INSTALLED_APPS = (
         ...
         'template_processors',
     )
-     ````
+     ```
 
+- Extend the `TEMPLATE_PRE_PROCESSORS` and `TEMPLATE_POST_PROCESSORS` settings with your own processors:
 
+    ```python
+    TEMPLATE_PRE_PROCESSORS = [
+        'my_app.processors.my_pre_processor',
+    ]
+
+    TEMPLATE_POST_PROCESSORS = [
+        'my_app.processors.my_post_processor',
+    ]
+     ```
+
+- Adjust the template loaders to use the new template processors. As an example, the
+  following configuration assumse that you had the built-in `filesystem` and `app_directories`
+  loaders configured. You need to wrap each loader with the `template_processors.loader.Loader`
+  class:
+
+    ```python
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            ...,
+            'OPTIONS': {
+                ...,
+                'loaders': [
+                    (
+                        'template_processors.loader.Loader',
+                        'django.template.loaders.filesystem.Loader',
+                    ),
+                    (
+                        'template_processors.loader.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                    ),
+                ],
+            },
+        },
+    ]
+     ```
 
 
 ## Usage
