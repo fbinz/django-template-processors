@@ -20,7 +20,7 @@ def TemplatePostProcessorMiddleware(get_response):  # noqa: N802
             if not isinstance(response, TemplateResponse):
                 return response
 
-            async for post_processor in post_processors:
+            for post_processor in post_processors:
                 response.add_post_render_callback(post_processor)
 
             return response
